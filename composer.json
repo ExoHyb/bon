@@ -1,11 +1,5 @@
 {
-  "require": {
-    "tecnickcom/tc-lib-pdf": "dev-master"
-  },
-  "repositories": [
-    {
-      "type": "vcs",
-      "url": "git@github.com:tecnickcom/tc-lib-pdf.git"
+    "require": {
+        "tecnickcom/tcpdf": "^6.2"
     }
-  ]
 }

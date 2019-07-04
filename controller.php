@@ -1,41 +1,46 @@
 <?php
 
-$array = [
-    'Client'                     => isset($_REQUEST['client']) ? $_REQUEST['client'] : false,
-    'Marque'                     => isset($_REQUEST['marque']) ? $_REQUEST['marque'] : false,
-    'Modèle'                     => isset($_REQUEST['modele']) ? $_REQUEST['modele'] : false,
-    'Immatriculation'            => isset($_REQUEST['immatriculation']) ? $_REQUEST['immatriculation'] : false,
-    'Kilométrage'                => isset($_REQUEST['kilometrage']) ? $_REQUEST['kilometrage'] : false,
-    'Type véhicule'              => isset($_REQUEST['type']) ? $_REQUEST['type'] : false,
-    'Dimension des pneumatiques' => isset($_REQUEST['dimensions']) ? $_REQUEST['dimensions'] : false,
-    'Interventions'              => isset($_REQUEST['interventions']) ? $_REQUEST['interventions'] : false,
-    'Position des pneumatiques'  => isset($_REQUEST['positions']) ? $_REQUEST['positions'] : false,
-    'Géométrie du véhicule'      => isset($_REQUEST['geometrie']) ? $_REQUEST['geometrie'] : false
-]
+# /!\ Ne pas toucher /!\
+require_once __DIR__ . '/vendor/autoload.php';
 
-?>
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-    <title>Bon de travail - <?php echo date('d/m/Y H:i:s'); ?></title>
-    <!-- Required meta tags -->
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+// create new PDF document
+$pdf = new TCPDF(PDF_PAGE_ORIENTATION, PDF_UNIT, PDF_PAGE_FORMAT, true, 'UTF-8', false);
 
-    <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="node_modules/bootstrap/dist/css/bootstrap.min.css">
-    <link rel="stylesheet" href="node_modules/bootstrap/dist/css/bootstrap-grid.min.css">
-    <link rel="stylesheet" href="node_modules/bootstrap/dist/css/bootstrap-reboot.min.css">
-    <link rel="stylesheet" href="assets/css/style.css">
-</head>
-<body>
-<div class="container">
-    <?php foreach ($array as $key => $value)  : ?>
-        <div class="row">
-            <div class="col-4"><?php echo $key; ?></div>
-            <div class="col-8"><?php echo (is_array($value)) ? implode(', ', $value) : $value; ?></div>
-        </div>
-    <?php endforeach; ?>
-</div>
-</body>
-</html>
+########################################################################################################################################
+/*
+ * ------------------------------------------------- Partie modifiable -----------------------------------------------------------------
+ */
+########################################################################################################################################
+// set document information
+$pdf->SetCreator('Rémi Marandon');
+$pdf->SetAuthor('Générateur de Bons de travail');
+$pdf->SetTitle('Bon de travail');
+$pdf->SetSubject('Bon de travail');
+$pdf->SetKeywords('');
+
+########################################################################################################################################
+/*
+ * ------------------------------------------------- Fin partie modifiable -------------------------------------------------------------
+ */
+########################################################################################################################################
+
+// remove default header/footer
+$pdf->setPrintHeader(false);
+$pdf->setPrintFooter(false);
+$pdf->SetDefaultMonospacedFont('times');
+$pdf->SetMargins(PDF_MARGIN_LEFT, PDF_MARGIN_TOP, PDF_MARGIN_RIGHT);
+$pdf->SetAutoPageBreak(true, PDF_MARGIN_BOTTOM);
+$pdf->setImageScale(PDF_IMAGE_SCALE_RATIO);
+$pdf->SetFont('times', 'BI', 20);
+$pdf->AddPage();
+
+ob_end_clean();
+ob_start();
+
+include __DIR__ . '/pdf.php';
+
+$output = ob_get_contents();
+ob_end_clean();
+
+$pdf->writeHTML($output, true, false, true, false, '');
+$pdf->Output('example_002.pdf', 'D');
